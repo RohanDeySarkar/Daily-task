@@ -1,0 +1,62 @@
+sample_json data ->
+[{
+	"id": 1,
+	"city": "Amsterdam",
+	"country": "Netherlands",
+	"monthlyAvg": [{
+			"high": 7,
+			"low": 3,
+			"dryDays": 19,
+			"snowDays": 4,
+			"rainfall": 68
+		},.....
+
+py file ->
+import requests
+import json
+
+url = 'http://127.0.0.1:8080'
+
+f = open('sample_json.json',)
+
+json_data = json.load(f)
+
+for i in json_data:
+    requests.post(url, json = i)
+
+conf file ->
+input {
+  http {
+    host => "127.0.0.1" 
+    port => 8080
+  }
+}
+
+filter {
+  json{
+    source => "message"
+    target => "parsedjson"
+  }
+
+  mutate {
+    remove_field => ["headers", "host", "@version", "@timestamp"]
+  }
+
+  if [country] == "Netherlands" {
+    mutate {
+        add_field => { "continent" => "europe" }
+      } 
+  }
+  
+}
+
+output {
+   stdout { codec => rubydebug }
+
+   elasticsearch {
+        hosts => [ "localhost:9200"]
+        index => "testingwithjson"
+    }
+}
+
+data send and checked

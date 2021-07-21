@@ -27,7 +27,6 @@ import urllib
 import ndjson
 
 json_file = "sample.json"
-kibana_url = "localhost:5601/api"
 headers = {'Content-Type': 'application/json', 'kbn-xsrf': 'true'}
 
 with open(json_file, 'r') as f:
@@ -37,12 +36,7 @@ json_data = json.loads(data)
 
 # print(json_data)
 
-id_default_index = ""
-for o in json_data['objects']:
-	if o['type'] == 'index-pattern':
-		id_default_index = o['id']
-
-url = 'http://%s/kibana/dashboards/import?exclude=some-pattern' % kibana_url
+url = 'http://localhost:5601/api/kibana/dashboards/import?exclude=some-pattern' 
 
 requests.post(url, headers=headers, json=json_data)
 

@@ -1,103 +1,33 @@
-sample_json data ->
-[{
-	"id": 1,
-	"city": "Amsterdam",
-	"country": "Netherlands",
-	"monthlyAvg": [{
-			"high": 7,
-			"low": 3,
-			"dryDays": 19,
-			"snowDays": 4,
-			"rainfall": 68
-		},.....
+Importing and saving dashboard as .ndjson
 
-py file ->
-import requests
-import json
+url = "http://127.0.0.1:5601/api/kibana/dashboards/export?dashboard=b7551620-e959-11eb-9b98-25e9151151c6"
+headers = {"Content-Type": "application/x-ndjson"}
 
-url = 'http://127.0.0.1:8080'
+res = requests.get(url)
+data = res.json()
 
-f = open('sample_json.json',)
+# print(data)
 
-json_data = json.load(f)
+# for i in data:
+# 	print(data["objects"])
 
-for i in json_data:
-    requests.post(url, json = i)
+with open('sample.ndjson', 'w') as f:
+	ndjson.dump(data["objects"], f)
 
-conf file ->
-input {
-  http {
-    host => "127.0.0.1" 
-    port => 8080
-  }
-}
-
-filter {
-  json{
-    source => "message"
-    target => "parsedjson"
-  }
-
-  mutate {
-    remove_field => ["headers", "host", "@version", "@timestamp"]
-  }
-
-  if [country] == "Netherlands" {
-    mutate {
-        add_field => { "continent" => "europe" }
-      } 
-  }
-  
-}
-
-output {
-   stdout { codec => rubydebug }
-
-   elasticsearch {
-        hosts => [ "localhost:9200"]
-        index => "testingwithjson"
-    }
-}
-
-data send and checked
+print("Imported")
 
 
+Exporting to saved objects kibana ->
 
-// sending file
-import requests
-import json
-import time
+f = open('sample.ndjson')
 
-# http
-url = 'http://127.0.0.1:8080'
+ndjson_data = ndjson.load(f)
 
-# upload a message
-# data = "string log value"
+print(ndjson_data)
 
-# requests.post(url, data = data)
+headers = {"Content-Type": "application/x-ndjson"}
+url = "http://127.0.0.1:5601/api/kibana/dashboards/import?"
 
-# upload json
+requests.post(url, json=ndjson_data, headers=headers)
 
-# class Logstash:
-#     def __init__(self, url):
-#         self.url = url
-
-f = open('csvjson.json',)
-
-json_data = json.load(f)
-
-requests.post(url, json = json_data)
-
-# count = 0
-# for i in json_data:
-#     requests.post(url, json = i)
-#     count += 1
-#     if count == 2000:
-#         print("Reached 2000 sleeping.....")
-#         time.sleep(10)
-#         count = 0
-
-# upload csv 
-
-print("successful")
-
+print("Exported")

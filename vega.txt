@@ -2,15 +2,13 @@
   $schema: https://vega.github.io/schema/vega-lite/v2.json
   data: {
     url: {
-      index: titanic
+      index: urldata
       body: {
         size: 1000
         _source: [
-          Sex
-          Age
-          Fare
-          Survived
-          Pclass
+          country
+          population
+          url
         ]
       }
     }
@@ -18,17 +16,27 @@
       property: hits.hits
     }
   }
+  params: [
+    {
+      name: select
+      select: point
+    }
+  ]
   mark: {
     type: bar
     tooltip: true
   }
   encoding: {
     x: {
-      field: _source.Survived
+      field: _source.country
+      type: ordinal
     }
     y: {
-      aggregate: count
-      field: _source.Survived
+      field: _source.population
+      type: quantitative
+    }
+    href: {
+      value: _source.url
     }
   }
 }

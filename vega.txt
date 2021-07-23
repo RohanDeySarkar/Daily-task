@@ -1,42 +1,81 @@
 {
-  $schema: https://vega.github.io/schema/vega-lite/v2.json
-  data: {
-    url: {
-      index: urldata
-      body: {
-        size: 1000
-        _source: [
-          country
-          population
-          url
-        ]
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  
+  "signals": [
+    {
+      "name": "popval",
+      "value": 10000,
+      "bind": {"input": "range", "min": 10000, "max": 1600000000, "step": 1000}
+    },
+    {
+      "name": "tooltip",
+      "value": {},
+      "on": [
+        {"events": "rect:mouseover", "update": "datum._source"},
+        {"events": "rect:mouseout", "update": "{}"}
+      ]
+    }
+  ],
+  
+  "data": [
+    {
+      "name": "sampledata",
+      "url": {
+        "index": "urldata",
+        "body": {"size": 1000, "_source": ["country", "population", "url"]}
+      },
+      "format": {"property": "hits.hits"},
+      "transform": [
+        {"type": "filter", "expr": "datum._source.population >= popval"}
+      ]
+    }
+  ],
+  
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "domain": {"data": "sampledata", "field": "_source.country"},
+      "range": "width",
+      "padding": 0.05
+    },
+    {
+      "name": "yscale",
+      "domain": {"data": "sampledata", "field": "_source.population"},
+      "range": "height"
+    }
+  ],
+  
+  "axes": [
+    {"orient": "bottom", "scale": "xscale"},
+    {"orient": "left", "scale": "yscale"}
+  ],
+  
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "sampledata"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "_source.country"},
+          "width": {"scale": "xscale", "band": 1},
+          "y": {"scale": "yscale", "field": "_source.population"},
+          "y2": {"scale": "yscale", "value": 0}
+        },
+        "update": {"fill": {"value": "steelblue"}},
+        "hover": {"fill": {"value": "skyblue"}}
+      }
+    },
+    
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {"scale": "xscale", "signal": "tooltip.country", "band": 0.1},
+          "y": {"scale": "yscale", "signal": "tooltip.population", "offset": 10},
+          "text": {"signal": "tooltip.url"},
+        }
       }
     }
-    format: {
-      property: hits.hits
-    }
-  }
-  params: [
-    {
-      name: select
-      select: point
-    }
   ]
-  mark: {
-    type: bar
-    tooltip: true
-  }
-  encoding: {
-    x: {
-      field: _source.country
-      type: ordinal
-    }
-    y: {
-      field: _source.population
-      type: quantitative
-    }
-    href: {
-      value: _source.url
-    }
-  }
 }

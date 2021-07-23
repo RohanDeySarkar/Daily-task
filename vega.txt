@@ -10,11 +10,9 @@
       "name": "tooltip",
       "value": {},
       "on": [
-        {"events": "rect:mouseover", "update": "datum._source"},
-        {"events": "rect:mouseout", "update": "{}"}
+        {"events": "rect:click", "update": "datum._source"},
       ],
-      "ursor": "pointer"
-    }
+    },
   ],
   "data": [
     {
@@ -43,8 +41,21 @@
       "range": "height"
     }
   ],
+  
   "axes": [
-    {"orient": "bottom", "scale": "xscale"},
+    {"orient": "bottom", "scale": "xscale",
+      "encode": {
+        "labels": {
+        "interactive": true,
+        
+        "update": {
+          "href": {"signal": "tooltip.url"},
+          
+        }
+        },
+        "enter": {"href": "www.google.com"}
+      }
+    },
     {"orient": "left", "scale": "yscale"}
   ],
   "marks": [
@@ -53,11 +64,11 @@
       "from": {"data": "sampledata"},
       "encode": {
         "enter": {
-          "x": {"scale": "xscale", "field": "_source.country"},
+          "x": {"scale": "xscale", "field": "_source.country", "axis": {"href": "www.google.com"}},
           "width": {"scale": "xscale", "band": 1},
           "y": {"scale": "yscale", "field": "_source.population"},
           "y2": {"scale": "yscale", "value": 0},
-          "href": {"field": "_source.url"}
+         
         },
         "update": {"fill": {"value": "steelblue"}},
         "hover": {"fill": {"value": "skyblue"}},

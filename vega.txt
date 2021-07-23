@@ -11,7 +11,22 @@
       "value": {},
       "on": [
         {"events": "rect:mouseover", "update": "datum._source"},
+        {"events": "rect:mouseout", "update": "{}"},
       ],
+    },
+    {
+      "name": "signal_get_x_axis_label",
+      "value": "",
+      "on": [
+        {"events": "@mark_x_axis_labels:mouseover", "update": "datum.value"}
+      ]
+    },
+    {
+      "name": "signal_get_url",
+      "value": "",
+      "on": [
+        {"events": "@mark_x_axis_labels:mouseover", "update": "'https://en.wikipedia.org/wiki/' + datum.value"}
+      ]
     },
   ],
   "data": [
@@ -43,20 +58,28 @@
   ],
   
   "axes": [
-    {"orient": "bottom", "scale": "xscale",
+    { "orient": "bottom", "scale": "xscale",
       "encode": {
-        "labels": {
-        "interactive": true,
-        
-        "update": {
-          "href": {"signal": "tooltip.url"},
-          
-        }
-        },
-        "enter": {"href": "www.google.com"}
-      }
-    },
-    {"orient": "left", "scale": "yscale"}
+		  "labels": {
+			"name": "mark_x_axis_labels",
+			"interactive": true,
+			"update": {
+			  "fill": {"value": "blue"},
+			  "href": {"signal": "signal_get_url"}
+			},
+			"hover": {
+			  "fill": {"value": "red"}
+			}
+		  }
+		}
+    },	
+    
+	{ 	"orient": "left", 
+		"scale": "yscale",
+		
+		
+	}
+	
   ],
   "marks": [
     {
@@ -84,7 +107,19 @@
             "signal": "tooltip.population",
             "offset": 10
           },
-          "text": {"signal": "tooltip.url"}
+          "text": {"signal": "tooltip.population"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {"value": 50},
+          "y": {"value": 50},
+          "text": {"signal": "signal_get_x_axis_label"},
+		  "fontSize": {"value": 36},
+          "fill": {"value": "blue"}
         }
       }
     }

@@ -10,7 +10,7 @@
       "name": "tooltip",
       "value": {},
       "on": [
-        {"events": "rect:click", "update": "datum._source"},
+        {"events": "rect:mouseover", "update": "datum._source"},
       ],
     },
   ],

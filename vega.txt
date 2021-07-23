@@ -1,6 +1,5 @@
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
-  
   "signals": [
     {
       "name": "popval",
@@ -13,10 +12,10 @@
       "on": [
         {"events": "rect:mouseover", "update": "datum._source"},
         {"events": "rect:mouseout", "update": "{}"}
-      ]
+      ],
+      "ursor": "pointer"
     }
   ],
-  
   "data": [
     {
       "name": "sampledata",
@@ -30,7 +29,6 @@
       ]
     }
   ],
-  
   "scales": [
     {
       "name": "xscale",
@@ -45,12 +43,10 @@
       "range": "height"
     }
   ],
-  
   "axes": [
     {"orient": "bottom", "scale": "xscale"},
     {"orient": "left", "scale": "yscale"}
   ],
-  
   "marks": [
     {
       "type": "rect",
@@ -60,20 +56,24 @@
           "x": {"scale": "xscale", "field": "_source.country"},
           "width": {"scale": "xscale", "band": 1},
           "y": {"scale": "yscale", "field": "_source.population"},
-          "y2": {"scale": "yscale", "value": 0}
+          "y2": {"scale": "yscale", "value": 0},
+          "href": {"field": "_source.url"}
         },
         "update": {"fill": {"value": "steelblue"}},
-        "hover": {"fill": {"value": "skyblue"}}
+        "hover": {"fill": {"value": "skyblue"}},
       }
     },
-    
     {
       "type": "text",
       "encode": {
         "update": {
           "x": {"scale": "xscale", "signal": "tooltip.country", "band": 0.1},
-          "y": {"scale": "yscale", "signal": "tooltip.population", "offset": 10},
-          "text": {"signal": "tooltip.url"},
+          "y": {
+            "scale": "yscale",
+            "signal": "tooltip.population",
+            "offset": 10
+          },
+          "text": {"signal": "tooltip.url"}
         }
       }
     }

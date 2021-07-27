@@ -37,7 +37,7 @@
       "value": "",
       "on": [
           
-        {"events": "@mark_x_axis_labels:mouseover", "update": "'https://en.wikipedia.org/wiki/' + datum.value"}
+        {"events": "@mark_x_axis_labels:mouseover", "update": "'https://en.wikipedia.org/wiki/' + datum.label"}
         
       ]
     },
@@ -56,14 +56,6 @@
         {"type": "filter", "expr": "datum._source.population >= popval"}
       ]
     },
-    
-    {
-      "name": "filterdata",
-      "source": "sampledata",
-      "transform": [
-        {"type": "filter", "expr": "datum._source.country == signal_get_url"}
-      ]
-    }
   ],
   
   "scales": [
@@ -86,8 +78,10 @@
       "orient": "bottom",
       "scale": "xscale",
       "name": "x_axis",
+      "from": {"data": "sampledata"},
       "encode": {
         "labels": {
+        
           "name": "mark_x_axis_labels",
           "interactive": true,
           "update": {
